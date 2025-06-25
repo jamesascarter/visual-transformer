@@ -31,7 +31,7 @@ opt = torch.optim.Adam(vit.parameters(), lr=0.001)
 crt = torch.nn.CrossEntropyLoss()
 wandb.init(
   project='mlx8-week-03-vit',
-  name='multi head no layernorms no dropout no pos encoding'
+  name='averagepooling'
 )
 
 

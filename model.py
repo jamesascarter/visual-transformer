@@ -100,3 +100,26 @@ class MultiHeadAttention(torch.nn.Module):
     
     return self.o_proj(out)
   
+class Attention(torch.nn.Module):
+  def __init__(self, dim):
+    super().__init__()
+    self.dim = dim
+    self.q_proj = torch.nn.Linear(dim, dim)
+    self.k_proj = torch.nn.Linear(dim, dim)
+    self.v_proj = torch.nn.Linear(dim, dim)
+    self.o_proj = torch.nn.Linear(dim, dim)
+    self.drpout = torch.nn.Dropout(0.1)
+
+  def forward(self, x):
+    qry = self.q_proj(x)
+    key = self.k_proj(x)
+    val = self.v_proj(x)
+    att = qry @ key.transpose(-2, -1) * self.dim ** -0.5
+    att = torch.softmax(att, dim=-1)
+    att = self.drpout(att)
+    out = torch.matmul(att, val)
+    return self.o_proj(out)
+
+
+  
+  
