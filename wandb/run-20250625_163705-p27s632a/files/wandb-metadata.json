@@ -1,0 +1,16 @@
+{
+  "os":  "macOS-14.6.1-arm64-arm-64bit",
+  "python":  "CPython 3.9.21",
+  "startedAt":  "2025-06-25T15:37:06.075562Z",
+  "program":  "/Users/jamescarter/codes/visual-transformer/train.py",
+  "codePath":  "train.py",
+  "git":  {
+    "remote":  "git@github.com:jamesascarter/visual-transformer.git",
+    "commit":  "2c59225713bdf8014ebc41e1c7b193dbcea2d56c"
+  },
+  "email":  "jamesascarter@googlemail.com",
+  "root":  "/Users/jamescarter/codes/visual-transformer",
+  "host":  "Jamess-MacBook-Pro-2.local",
+  "executable":  "/Users/jamescarter/codes/visual-transformer/.venv/bin/python",
+  "codePathLocal":  "train.py"
+}

@@ -1,0 +1,22 @@
+2025-06-25 16:35:33,591 INFO    MainThread:73659 [wandb_setup.py:_flush():81] Current SDK version is 0.20.1
+2025-06-25 16:35:33,614 INFO    MainThread:73659 [wandb_setup.py:_flush():81] Configure stats pid to 73659
+2025-06-25 16:35:33,616 INFO    MainThread:73659 [wandb_setup.py:_flush():81] Loading settings from /Users/jamescarter/.config/wandb/settings
+2025-06-25 16:35:33,616 INFO    MainThread:73659 [wandb_setup.py:_flush():81] Loading settings from /Users/jamescarter/codes/visual-transformer/wandb/settings
+2025-06-25 16:35:33,616 INFO    MainThread:73659 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2025-06-25 16:35:33,616 INFO    MainThread:73659 [wandb_init.py:setup_run_log_directory():703] Logging user logs to /Users/jamescarter/codes/visual-transformer/wandb/run-20250625_163533-erf79k1h/logs/debug.log
+2025-06-25 16:35:33,616 INFO    MainThread:73659 [wandb_init.py:setup_run_log_directory():704] Logging internal logs to /Users/jamescarter/codes/visual-transformer/wandb/run-20250625_163533-erf79k1h/logs/debug-internal.log
+2025-06-25 16:35:33,616 INFO    MainThread:73659 [wandb_init.py:init():831] calling init triggers
+2025-06-25 16:35:33,617 INFO    MainThread:73659 [wandb_init.py:init():836] wandb.init called with sweep_config: {}
+config: {'_wandb': {}}
+2025-06-25 16:35:33,617 INFO    MainThread:73659 [wandb_init.py:init():872] starting backend
+2025-06-25 16:35:33,855 INFO    MainThread:73659 [wandb_init.py:init():875] sending inform_init request
+2025-06-25 16:35:33,875 INFO    MainThread:73659 [wandb_init.py:init():883] backend started and connected
+2025-06-25 16:35:33,878 INFO    MainThread:73659 [wandb_init.py:init():956] updated telemetry
+2025-06-25 16:35:33,902 INFO    MainThread:73659 [wandb_init.py:init():980] communicating run to backend with 90.0 second timeout
+2025-06-25 16:35:34,512 INFO    MainThread:73659 [wandb_init.py:init():1032] starting run threads in backend
+2025-06-25 16:35:34,547 INFO    MainThread:73659 [wandb_run.py:_console_start():2453] atexit reg
+2025-06-25 16:35:34,547 INFO    MainThread:73659 [wandb_run.py:_redirect():2301] redirect: wrap_raw
+2025-06-25 16:35:34,547 INFO    MainThread:73659 [wandb_run.py:_redirect():2370] Wrapping output streams.
+2025-06-25 16:35:34,548 INFO    MainThread:73659 [wandb_run.py:_redirect():2393] Redirects installed.
+2025-06-25 16:35:34,549 INFO    MainThread:73659 [wandb_init.py:init():1078] run started, returning control to user process
+2025-06-25 16:35:34,764 INFO    MsgRouterThr:73659 [mailbox.py:close():129] [no run ID] Closing mailbox, abandoning 1 handles.

@@ -1,9 +1,11 @@
-class Vit(torch.nn.Module)
+import torch
+
+class Vit(torch.nn.Module):
   def __init__(self):
     super().__init__()
-    self.cls = torch.nn.Parameter(torch.randn(1, 1, 1)) # (1, 1, 1) random gen cls token added. This is an addition to the 16 patches. now have 16 patches + 1 cls token.
+    self.cls = torch.nn.Parameter(torch.randn(1, 1, 128)) # (1, 1, 128) this is the cls token. B is the batch size.
     self.emb = torch.nn.Linear(196, 128) # this changes the dimension of the 16 patches from 196 to 128.
-    self.pos = torch.nn.embedding(17,128) # this adds the positional encoding to the 16 patches. each token gets a positional embedding added.
+    self.pos = torch.nn.Embedding(17,128) # this adds the positional encoding to the 16 patches. each token gets a positional embedding added.
     self.register_buffer('rng', (torch.arange(17))) # this registers the positional encoding as a buffer.
     self.enc = torch.nn.ModuleList([EncoderLayer(128) for _ in range(6)]) # this creates a list of 6 encoder layers.
     self.fin = torch.nn.Sequential(
@@ -24,19 +26,19 @@ class Vit(torch.nn.Module)
 class EncoderLayer(torch.nn.Module):
   def __init__(self, dim):
     super().__init__()
-    self.attn = MultiHeadAttention(dim) # this is the attention layer.
+    self.att = MultiHeadAttention(dim) # this is the attention layer.
     self.ffn = FFN(dim) # this is the feedforward layer.
     self.ini = torch.nn.LayerNorm(dim) # this is the initial layer normalization.
     self.fin = torch.nn.LayerNorm(dim) # this i s the final layer normalization.
 
-    def forward(self, src):
-      out = self.att(src) # [B, 17, 128] this is the output of the attention layer.
-      src = src + out # [B, 17, 128] this is the output of the attention layer added to the input.
-      src = self.ini(src) # [B, 17, 128] this is the output of the initial layer normalization.
-      out = self.ffn(src) # [B, 17, 128] this is the output of the feedforward layer.
-      src = src + out # [B, 17, 128] this is the output of the feedforward layer added to the input.
-      src = self.fin(src) # [B, 17, 128] this is the output of the final layer normalization.
-      return src
+  def forward(self, src):
+    out = self.att(src) # [B, 17, 128] this is the output of the attention layer.
+    src = src + out # [B, 17, 128] this is the output of the attention layer added to the input.
+    src = self.ini(src) # [B, 17, 128] this is the output of the initial layer normalization.
+    out = self.ffn(src) # [B, 17, 128] this is the output of the feedforward layer.
+    src = src + out # [B, 17, 128] this is the output of the feedforward layer added to the input.
+    src = self.fin(src) # [B, 17, 128] this is the output of the final layer normalization.
+    return src
     
 class FFN(torch.nn.Module):
   def __init__(self, dim):
@@ -66,43 +68,35 @@ class MultiHeadAttention(torch.nn.Module):
     self.o_proj = torch.nn.Linear(dim, dim) # this is the projection layer for the output.
     self.dropout = torch.nn.Dropout(0.1)
 
-    def forward(self, x):
-      B, N, C = x.shape # [B, 17, 128] this is the shape of the input. B is the batch size, N is the number of tokens, C is the dimension of the input.
+  def forward(self, x):
+    B, N, C = x.shape # [B, 17, 128] this is the shape of the input. B is the batch size, N is the number of tokens, C is the dimension of the input.
 
-       # Project to Q, K, V
-      qry = self.q_proj(x)  # [B, 17, 128]
-      key = self.k_proj(x)  # [B, 17, 128]
-      val = self.v_proj(x)  # [B, 17, 128]
-      
-      # Reshape for multi-head: [B, seq_len, num_heads, head_dim]
-      qry = qry.view(B, N, self.num_heads, self.head_dim)
-      key = key.view(B, N, self.num_heads, self.head_dim)
-      val = val.view(B, N, self.num_heads, self.head_dim)
-      
-      # Transpose for attention: [B, num_heads, seq_len, head_dim]
-      qry = qry.transpose(1, 2)  # [B, 8, 17, 16]
-      key = key.transpose(1, 2)  # [B, 8, 17, 16]
-      val = val.transpose(1, 2)  # [B, 8, 17, 16]
-
-
-        # Compute attention scores
-      attn = qry @ key.transpose(-2, -1) * (self.head_dim ** -0.5)  # [B, 8, 17, 17]
-      attn = attn.softmax(dim=-1)
-      attn = self.dropout(attn)
-      
-      # Apply attention to values
-      out = attn @ v  # [B, 8, 17, 16]
-      
-      # Concatenate heads: [B, seq_len, dim]
-      out = out.transpose(1, 2).contiguous().view(B, N, C)
-      
-      return self.o_proj(out)
+      # Project to Q, K, V
+    qry = self.q_proj(x)  # [B, 17, 128]
+    key = self.k_proj(x)  # [B, 17, 128]
+    val = self.v_proj(x)  # [B, 17, 128]
     
+    # Reshape for multi-head: [B, seq_len, num_heads, head_dim]
+    qry = qry.view(B, N, self.num_heads, self.head_dim)
+    key = key.view(B, N, self.num_heads, self.head_dim)
+    val = val.view(B, N, self.num_heads, self.head_dim)
     
-class FFN(torch.nn.Module):
-  def __init__(self, dim):
-    super().__init__()
-    self.one = torch.nn.Linear(dim, dim)
-    self.drp = torch.nn.Dropout(0.1)
-    self.rlu = torch.nn.ReLU(inplace=True)
-    self.two = torch.nn.Linear(dim, dim)
+    # Transpose for attention: [B, num_heads, seq_len, head_dim]
+    qry = qry.transpose(1, 2)  # [B, 8, 17, 16]
+    key = key.transpose(1, 2)  # [B, 8, 17, 16]
+    val = val.transpose(1, 2)  # [B, 8, 17, 16]
+
+
+      # Compute attention scores
+    attn = qry @ key.transpose(-2, -1) * (self.head_dim ** -0.5)  # [B, 8, 17, 17]
+    attn = attn.softmax(dim=-1)
+    attn = self.dropout(attn)
+    
+    # Apply attention to values
+    out = attn @ val  # [B, 8, 17, 16]
+    
+    # Concatenate heads: [B, seq_len, dim]
+    out = out.transpose(1, 2).contiguous().view(B, N, C)
+    
+    return self.o_proj(out)
+  

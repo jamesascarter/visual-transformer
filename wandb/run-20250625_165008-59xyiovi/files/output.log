@@ -1,0 +1,18 @@
+Traceback (most recent call last):                                              
+  File "/Users/jamescarter/codes/visual-transformer/train.py", line 55, in <module>
+    outs = vit(ptch)
+  File "/Users/jamescarter/codes/visual-transformer/.venv/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/Users/jamescarter/codes/visual-transformer/.venv/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/Users/jamescarter/codes/visual-transformer/model.py", line 21, in forward
+    for enc in self.enc: hdn = enc(hdn) # [B, 17, 128] this is the embedding of the 16 patches and the cls token with the positional encoding after the encoder layers.
+  File "/Users/jamescarter/codes/visual-transformer/.venv/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/Users/jamescarter/codes/visual-transformer/.venv/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/Users/jamescarter/codes/visual-transformer/model.py", line 34, in forward
+    src = self.ini(src) # [B, 17, 128] this is the output of the initial layer normalization.
+  File "/Users/jamescarter/codes/visual-transformer/.venv/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1940, in __getattr__
+    raise AttributeError(
+AttributeError: 'EncoderLayer' object has no attribute 'ini'

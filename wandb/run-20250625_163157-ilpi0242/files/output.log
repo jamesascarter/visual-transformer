@@ -1,0 +1,10 @@
+Traceback (most recent call last):                                              
+  File "/Users/jamescarter/codes/visual-transformer/train.py", line 52, in <module>
+    outs = vit(ptch)
+  File "/Users/jamescarter/codes/visual-transformer/.venv/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/Users/jamescarter/codes/visual-transformer/.venv/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/Users/jamescarter/codes/visual-transformer/model.py", line 20, in forward
+    hdn = torch.cat([cls, pch], dim=1) # [B, 17, 128] this is the embedding of the 16 patches and the cls token.
+RuntimeError: Sizes of tensors must match except in dimension 1. Expected size 1 but got size 128 for tensor number 1 in the list.
