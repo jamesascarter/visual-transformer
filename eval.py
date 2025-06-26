@@ -36,28 +36,31 @@ vit.eval()
 #
 #
 ds = dataset.Classify(train=False)
-dl = torch.utils.data.DataLoader(ds, batch_size=1024, shuffle=False)
+dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False)
 
 
 #
 #
 #
-tot = 0; pos = 0
+correct = 0
+total = 0
 
+with torch.no_grad():
+    for ptch, lbls in dl:
+        ptch = torch.flatten(ptch, start_dim=2).to(dev)
+        lbls = lbls.to(dev)
+        
+        outs = vit(ptch)  # [B, 4, 10]
+        
+        # Check if ALL 4 digits are correct
+        all_correct = torch.ones(lbls.size(0), dtype=torch.bool, device=dev)
+        for i in range(4):
+            _, predicted = torch.max(outs[:, i, :], 1)
+            print(predicted, lbls[:, i])
+            all_correct &= (predicted == lbls[:, i])  # All digits must be correct
+        
+        correct += all_correct.sum().item()
+        total += lbls.size(0)
 
-#
-#
-#
-for _, pch, lbl in dl:
-  pch = torch.flatten(pch, start_dim=2).to(dev)
-  out = vit(pch)
-  _, prd = torch.max(out.data, 1)
-  prd = prd.detach().cpu()
-  tot += lbl.size(0)
-  pos += (prd == lbl).sum().item()
-
-
-#
-#
-#
-print(f'Tot: {tot} Pos: {pos} Acc: {pos / tot:.2%}')
+accuracy = 100 * correct / total
+print(f"All-digits-correct accuracy: {accuracy:.2f}%")

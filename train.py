@@ -31,7 +31,7 @@ opt = torch.optim.Adam(vit.parameters(), lr=0.001)
 crt = torch.nn.CrossEntropyLoss()
 wandb.init(
   project='mlx8-week-03-vit',
-  name='averagepooling'
+  name='real'
 )
 
 
@@ -40,21 +40,24 @@ wandb.init(
 #
 #
 ds = dataset.Classify()
-dl = torch.utils.data.DataLoader(ds, batch_size=1024, shuffle=True)
+dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=True)
 
 
 #
 #
 #
 #
-for epoch in range(5):
+for epoch in range(10):
   prgs = tqdm.tqdm(dl, desc=f"Epoch {epoch + 1}", leave=False)
-  for idx, (_, ptch, lbls) in enumerate(prgs):
+  for idx, (ptch, lbls) in enumerate(prgs):
     ptch = torch.flatten(ptch, start_dim=2).to(dev)
     lbls = lbls.to(dev)
     outs = vit(ptch)
     opt.zero_grad()
-    loss = crt(outs, lbls)
+    loss = 0
+    for i in range(4):
+        loss += crt(outs[:, i, :], lbls[:, i])  # Loss for each digit
+    loss = loss / 4  # Average loss
     loss.backward()
     opt.step()
     wandb.log({'loss': loss.item()})

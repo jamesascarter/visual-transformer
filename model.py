@@ -4,14 +4,14 @@ class Vit(torch.nn.Module):
   def __init__(self):
     super().__init__()
     self.cls = torch.nn.Parameter(torch.randn(1, 1, 128)) # (1, 1, 128) this is the cls token. B is the batch size.
-    self.emb = torch.nn.Linear(196, 128) # this changes the dimension of the 16 patches from 196 to 128.
+    self.emb = torch.nn.Linear(784, 128) # this changes 
     self.pos = torch.nn.Embedding(17,128) # this adds the positional encoding to the 16 patches. each token gets a positional embedding added.
     self.register_buffer('rng', (torch.arange(17))) # this registers the positional encoding as a buffer.
     self.enc = torch.nn.ModuleList([EncoderLayer(128) for _ in range(6)]) # this creates a list of 6 encoder layers.
     self.fin = torch.nn.Sequential(
       torch.nn.LayerNorm(128),
-      torch.nn.Linear(128, 10)
-    ) # this is the final layer. it takes the output of the encoder and projects it to 10 classes.
+      torch.nn.Linear(128, 40)
+    ) # this is the final layer. it takes the output of the encoder and projects it to 10 classes. Remove when decoder.
 
   def forward(self, x):
     B = x.shape[0] # [B, 16, 196] this is 16 patches of 196 pixels each.
@@ -21,7 +21,8 @@ class Vit(torch.nn.Module):
     hdn = hdn + self.pos(self.rng) # [B, 17, 128] this is the embedding of the 16 patches and the cls token with the positional encoding.
     for enc in self.enc: hdn = enc(hdn) # [B, 17, 128] this is the embedding of the 16 patches and the cls token with the positional encoding after the encoder layers.
     out = hdn[:, 0, :] # [B, 128] this is the embedding of the cls token after the encoder layers.
-    return self.fin(out) # [B, 10] this is the output of the final layer.
+    logits = self.fin(out) # [B, 40] this is the output of the final layer.
+    return logits.view(-1, 4, 10) # [B, 4, 10] this is the output of the final layer.
   
 class EncoderLayer(torch.nn.Module):
   def __init__(self, dim):
@@ -65,7 +66,7 @@ class MultiHeadAttention(torch.nn.Module):
     self.q_proj = torch.nn.Linear(dim, dim) # this is the projection layer for the query.
     self.k_proj = torch.nn.Linear(dim, dim) # this is the projection layer for the key.
     self.v_proj = torch.nn.Linear(dim, dim) # this is the projection layer for the value.
-    self.o_proj = torch.nn.Linear(dim, dim) # this is the projection layer for the output.
+    self.o_proj = torch.nn.Linear(dim, dim) # this is the projection layer for the output. 
     self.dropout = torch.nn.Dropout(0.1)
 
   def forward(self, x):
