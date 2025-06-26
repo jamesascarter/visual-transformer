@@ -31,7 +31,7 @@ opt = torch.optim.Adam(vit.parameters(), lr=0.001)
 crt = torch.nn.CrossEntropyLoss()
 wandb.init(
   project='mlx8-week-03-vit',
-  name='real'
+  name='encoder and decoder'
 )
 
 
@@ -47,9 +47,9 @@ dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=True)
 #
 #
 #
-for epoch in range(10):
+for epoch in range(5):
   prgs = tqdm.tqdm(dl, desc=f"Epoch {epoch + 1}", leave=False)
-  for idx, (ptch, lbls) in enumerate(prgs):
+  for idx, (ptch, lbls, _, _) in enumerate(prgs):
     ptch = torch.flatten(ptch, start_dim=2).to(dev)
     lbls = lbls.to(dev)
     outs = vit(ptch)
